@@ -81,7 +81,7 @@ class NotesEntry extends StatelessWidget {
     );
   }
 
-  GestureDetector _buildColorBox(BuildContext context, String color) {
+  Color _toColor(String color){
     Color colorValue = Colors.white;
     switch (color) {
       case "red" : colorValue = Colors.red; break;
@@ -91,7 +91,12 @@ class NotesEntry extends StatelessWidget {
       case "grey" : colorValue = Colors.grey; break;
       case "purple" : colorValue = Colors.purple; break;
     }
-    //print(color);
+    return colorValue;
+  }
+
+  GestureDetector _buildColorBox(BuildContext context, String color) {
+    Color colorValue = _toColor(color);
+
     return GestureDetector(
         child: Container(
             decoration: ShapeDecoration(

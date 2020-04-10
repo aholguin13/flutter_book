@@ -3,12 +3,13 @@ import 'package:scoped_model/scoped_model.dart';
 NotesModel notesModel = NotesModel();
 
 class Note {
+  int id;
   String title;
   String content;
   String color;
 
   String toString() {
-    return "{ title=$title, content=$content, color=$color }";
+    return "{ id = $id, title=$title, content=$content, color=$color }";
   }
 }
 

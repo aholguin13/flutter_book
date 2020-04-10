@@ -36,6 +36,19 @@ class NotesList extends StatelessWidget {
         });
   }
 
+  Color _toColor(String color){
+    Color colorValue = Colors.white;
+    switch (color) {
+      case "red" : colorValue = Colors.red; break;
+      case "green" : colorValue = Colors.green; break;
+      case "blue" : colorValue = Colors.blue; break;
+      case "yellow" : colorValue = Colors.yellow; break;
+      case "grey" : colorValue = Colors.grey; break;
+      case "purple" : colorValue = Colors.purple; break;
+    }
+    return colorValue;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +68,7 @@ class NotesList extends StatelessWidget {
                   itemBuilder: (BuildContext context, int index) {
                     Note note = model.noteList[index];
                     Color color = Colors.white;
+                    color = _toColor(note.color);
                     switch(note.color){
                       case "red" : color = Colors.red; break;
                       case "green" : color = Colors.green; break;
