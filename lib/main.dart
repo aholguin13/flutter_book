@@ -1,10 +1,19 @@
-import 'package:edu/tasks/Tasks.dart';
 import 'package:flutter/material.dart';
-
+import 'package:path_provider/path_provider.dart';
+import 'appointments/Appointments.dart';
+import 'contacts/Avatar.dart';
+import 'contacts/Contacts.dart';
 import 'notes/Notes.dart';
+import 'tasks/Tasks.dart';
 
-
-void main() => runApp(FlutterBook());
+void main() {
+  startMeUp() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    Avatar.docsDir = await getApplicationDocumentsDirectory();
+    runApp(FlutterBook());
+  }
+  startMeUp();
+}
 
 class FlutterBook extends StatelessWidget {
   @override
@@ -19,7 +28,7 @@ class FlutterBook extends StatelessWidget {
             length: 4,
             child: Scaffold(
                 appBar: AppBar(
-                    title: Text('FlutterBook'),
+                    title: Text('FlutterBook Alexis Holguin'),
                     bottom: TabBar(
                         tabs: [
                           Tab(icon: Icon(Icons.date_range), text: 'Appointments'),
@@ -31,8 +40,8 @@ class FlutterBook extends StatelessWidget {
                 ),
                 body: TabBarView(
                     children: [
-                      Dummy('Appointments'),
-                      Dummy('Contacts'),
+                      Appointments(),
+                      Contacts(),
                       Notes(),
                       Tasks(),
                     ]
@@ -40,16 +49,5 @@ class FlutterBook extends StatelessWidget {
             )
         )
     );
-  }
-}
-
-class Dummy extends StatelessWidget {
-  final String _title;
-
-  Dummy(this._title);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(_title));
   }
 }
