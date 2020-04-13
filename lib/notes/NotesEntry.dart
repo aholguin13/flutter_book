@@ -2,6 +2,8 @@ import 'package:edu/notes/NotesModel.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import 'NotesDBWorker.dart';
+
 //import 'NotesModel.dart';
 
 class NotesEntry extends StatelessWidget {
@@ -20,13 +22,17 @@ class NotesEntry extends StatelessWidget {
     });
   }
 
-  void _save(BuildContext context, NotesModel model) {
+  Future<void> _save(BuildContext context, NotesModel model) async {
     if (!_formKey.currentState.validate()) {
       return;
     }
-    if (!model.noteList.contains(model.noteBeingEdited)) {
-      model.noteList.add(model.noteBeingEdited);
+    if (model.noteBeingEdited.id == null) {
+      await NotesDBWorker.db.create(notesModel.noteBeingEdited);
+    } else {
+      await NotesDBWorker.db.update(notesModel.noteBeingEdited);
     }
+    notesModel.loadData(NotesDBWorker.db);
+
     model.setStackIndex(0);
     Scaffold.of(context).showSnackBar(
         SnackBar(

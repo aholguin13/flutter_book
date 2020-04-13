@@ -9,7 +9,7 @@ class Note {
   String color;
 
   String toString() {
-    return "{ id = $id, title=$title, content=$content, color=$color }";
+    return "{ id=$id, title=$title, content=$content, color=$color }";
   }
 }
 
@@ -26,6 +26,12 @@ class NotesModel extends Model {
 
   void setColor(String color) {
     this.color = color;
+    notifyListeners();
+  }
+
+  void loadData(dynamic database) async {
+    noteList.clear();
+    noteList.addAll(await database.getAll());
     notifyListeners();
   }
 }

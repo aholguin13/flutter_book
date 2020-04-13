@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import 'NotesDBWorker.dart';
+
 class NotesList extends StatelessWidget {
 
   _deleteNote(BuildContext context, NotesModel model, Note note) {
@@ -18,9 +20,8 @@ class NotesList extends StatelessWidget {
                     onPressed: ()  => Navigator.of(alertContext).pop()
                 ),
                 FlatButton(child : Text("Delete"),
-                    onPressed : () {
-                      model.noteList.remove(note);
-                      model.setStackIndex(0);
+                    onPressed : () async{
+                      await NotesDBWorker.db.delete(note.id);
                       Navigator.of(alertContext).pop();
                       Scaffold.of(context).showSnackBar(
                           SnackBar(
@@ -29,6 +30,7 @@ class NotesList extends StatelessWidget {
                               content : Text("Note deleted")
                           )
                       );
+                      model.loadData(NotesDBWorker.db);
                     }
                 )
               ]
