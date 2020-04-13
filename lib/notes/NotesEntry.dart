@@ -1,10 +1,7 @@
-import 'package:edu/notes/NotesModel.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-
 import 'NotesDBWorker.dart';
-
-//import 'NotesModel.dart';
+import 'NotesModel.dart';
 
 class NotesEntry extends StatelessWidget {
 
@@ -14,31 +11,40 @@ class NotesEntry extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   NotesEntry() {
-    _titleEditingController.addListener(() { 
-       notesModel.entryBeingEdited.title = _titleEditingController.text;
+    _titleEditingController.addListener(() {
+      notesModel.entityBeingEdited.title = _titleEditingController.text;
     });
-    _contentEditingController.addListener(() { 
-       notesModel.entryBeingEdited.content  = _contentEditingController.text;
+    _contentEditingController.addListener(() {
+      notesModel.entityBeingEdited.content = _contentEditingController.text;
     });
   }
 
-  Future<void> _save(BuildContext context, NotesModel model) async {
-    if (!_formKey.currentState.validate()) {
-      return;
-    }
-    if (model.entryBeingEdited.id == null) {
-      await NotesDBWorker.db.create(notesModel.entryBeingEdited);
-    } else {
-      await NotesDBWorker.db.update(notesModel.entryBeingEdited);
-    }
-    notesModel.loadData(NotesDBWorker.db);
+  @override
+  Widget build(BuildContext context) {
+    return ScopedModelDescendant<NotesModel>(
+        builder: (BuildContext context, Widget child, NotesModel model) {
 
-    model.setStackIndex(0);
-    Scaffold.of(context).showSnackBar(
-        SnackBar(
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2), content: Text('Note saved'),
-        )
+          // Correction: added for "editing" an existing note
+          _titleEditingController.text = model.entityBeingEdited?.title;
+          _contentEditingController.text = model.entityBeingEdited?.content;
+
+          return Scaffold(
+              bottomNavigationBar: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                  child: _buildControlButtons(context, model)
+              ),
+              body: Form(
+                  key: _formKey,
+                  child: ListView(
+                      children: [
+                        _buildTitleListTile(),
+                        _buildContentListTile(),
+                        _buildColorListTile(context)
+                      ]
+                  )
+              )
+          );
+        }
     );
   }
 
@@ -53,7 +59,7 @@ class NotesEntry extends StatelessWidget {
               return 'Please enter a title';
             }
             return null;
-            },
+          },
         )
     );
   }
@@ -81,43 +87,31 @@ class NotesEntry extends StatelessWidget {
     return ListTile(
         leading: Icon(Icons.color_lens),
         title: Row(
-            children: colors.expand((c) => 
+            children: colors.expand((c) =>
             [_buildColorBox(context, c), Spacer()]).toList()..removeLast()
         )
     );
   }
 
-  Color _toColor(String color){
-    Color colorValue = Colors.white;
-    switch (color) {
-      case "red" : colorValue = Colors.red; break;
-      case "green" : colorValue = Colors.green; break;
-      case "blue" : colorValue = Colors.blue; break;
-      case "yellow" : colorValue = Colors.yellow; break;
-      case "grey" : colorValue = Colors.grey; break;
-      case "purple" : colorValue = Colors.purple; break;
-    }
-    return colorValue;
-  }
-
   GestureDetector _buildColorBox(BuildContext context, String color) {
-    Color colorValue = _toColor(color);
-
+    final Color colorValue = _toColor(color);
     return GestureDetector(
         child: Container(
             decoration: ShapeDecoration(
                 shape: Border.all(width: 16, color: colorValue) +
-                    Border.all(width: 4,  color: notesModel.color == color ? colorValue : Theme.of(context).canvasColor)
-               )
+                    Border.all(width: 4, color: notesModel.color == color ?
+                    colorValue: Theme.of(context).canvasColor
+                    )
+            )
         ),
         onTap: () {
-          notesModel.entryBeingEdited.color = color;
+          notesModel.entityBeingEdited.color = color;
           notesModel.setColor(color);
         }
     );
   }
 
-   Row _buildControlButtons(BuildContext context, NotesModel model) {
+  Row _buildControlButtons(BuildContext context, NotesModel model) {
     return Row(children: [
       FlatButton(
         child: Text('Cancel'),
@@ -137,34 +131,49 @@ class NotesEntry extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ScopedModelDescendant<NotesModel>(
-          builder: (BuildContext context, Widget child, NotesModel model) {
-            _titleEditingController.text = model.entryBeingEdited?.title;
-            _contentEditingController.text = model.entryBeingEdited?.content;
-            return Scaffold(
-              bottomNavigationBar: Padding(
-                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                child: _buildControlButtons(context, model)
-              ),
-              body: Form(
-                key: _formKey,
-                child: ListView(
-                  children: [
-                    _buildTitleListTile(),
-                    _buildContentListTile(),
-                    _buildColorListTile(context)
-                  ]
-                )
-              )
-            );
-          }
-      );
+  void _save(BuildContext context, NotesModel model) async {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+
+    /*
+    if (!model.noteList.contains(model.noteBeingEdited)) {
+      model.noteList.add(model.noteBeingEdited);
+    }
+    */
+
+    if (model.entityBeingEdited.id == null) {
+      await NotesDBWorker.db.create(notesModel.entityBeingEdited);
+    } else {
+      await NotesDBWorker.db.update(notesModel.entityBeingEdited);
+    }
+    notesModel.loadData(NotesDBWorker.db);
+
+    model.setStackIndex(0);
+    Scaffold.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 2), content: Text('Note saved'),
+        )
+    );
+  }
+
+  Color _toColor(String color) {
+    switch (color) {
+      case 'red':
+        return Colors.red;
+      case 'green':
+        return Colors.green;
+      case 'blue':
+        return Colors.blue;
+      case 'yellow':
+        return Colors.yellow;
+      case 'grey':
+        return Colors.grey;
+      case 'purple':
+        return Colors.purple;
+      default:
+        return Colors.white;
+    }
   }
 }
-
-
-
-
-

@@ -1,56 +1,10 @@
-import 'package:edu/notes/NotesModel.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:scoped_model/scoped_model.dart';
-
+import 'NotesModel.dart' show Note, NotesModel;
 import 'NotesDBWorker.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class NotesList extends StatelessWidget {
-
-  _deleteNote(BuildContext context, NotesModel model, Note note) {
-    return showDialog(
-        context : context,
-        barrierDismissible : false,
-        builder : (BuildContext alertContext) {
-          return AlertDialog(
-              title : Text("Delete Note"),
-              content : Text("Are you sure you want to delete ${note.title}?"),
-              actions : [
-                FlatButton(child : Text("Cancel"),
-                    onPressed: ()  => Navigator.of(alertContext).pop()
-                ),
-                FlatButton(child : Text("Delete"),
-                    onPressed : () async{
-                      await NotesDBWorker.db.delete(note.id);
-                      Navigator.of(alertContext).pop();
-                      Scaffold.of(context).showSnackBar(
-                          SnackBar(
-                              backgroundColor : Colors.red,
-                              duration : Duration(seconds : 2),
-                              content : Text("Note deleted")
-                          )
-                      );
-                      model.loadData(NotesDBWorker.db);
-                    }
-                )
-              ]
-          );
-        });
-  }
-
-  Color _toColor(String color){
-    Color colorValue = Colors.white;
-    switch (color) {
-      case "red" : colorValue = Colors.red; break;
-      case "green" : colorValue = Colors.green; break;
-      case "blue" : colorValue = Colors.blue; break;
-      case "yellow" : colorValue = Colors.yellow; break;
-      case "grey" : colorValue = Colors.grey; break;
-      case "purple" : colorValue = Colors.purple; break;
-    }
-    return colorValue;
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -60,38 +14,29 @@ class NotesList extends StatelessWidget {
               floatingActionButton: FloatingActionButton(
                   child: Icon(Icons.add, color: Colors.white),
                   onPressed: () {
-                    model.entryBeingEdited = Note();
+                    model.entityBeingEdited = Note();
                     model.setColor(null);
                     model.setStackIndex(1);
                   }
               ),
               body: ListView.builder(
-                  itemCount: model.entryList.length,
+                  itemCount: model.entityList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Note note = model.entryList[index];
-                    Color color = Colors.white;
-                    color = _toColor(note.color);
-                    switch(note.color){
-                      case "red" : color = Colors.red; break;
-                      case "green" : color = Colors.green; break;
-                      case "blue" : color = Colors.blue; break;
-                      case "yellow" : color = Colors.yellow; break;
-                      case "grey" : color = Colors.grey; break;
-                      case "purple" : color = Colors.purple; break;
-                    }
+                    Note note = model.entityList[index];
+                    Color color = _toColor(note.color);
                     return Container(
                         padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                         child: Slidable(
-                          actionPane: SlidableScrollActionPane(),
-                          actionExtentRatio: .25,
-                          secondaryActions: <Widget>[
-                            IconSlideAction(
-                              caption: "Delete",
-                              color: Colors.red,
-                              icon: Icons.delete,
-                              onTap: () => _deleteNote(context, model, note),
-                            )
-                          ],
+                            actionPane: SlidableDrawerActionPane(),
+                            actionExtentRatio: .25,
+                            secondaryActions: [
+                              IconSlideAction(
+                                  caption: "Delete",
+                                  color: Colors.red,
+                                  icon: Icons.delete,
+                                  onTap: () => _deleteNote(context, model, note)
+                              )
+                            ],
                             child: Card(
                                 elevation: 8,
                                 color: color,
@@ -99,17 +44,75 @@ class NotesList extends StatelessWidget {
                                   title: Text(note.title),
                                   subtitle: Text(note.content),
                                   onTap: () {
-                                    model.entryBeingEdited = note;
-                                    model.setColor(model.entryBeingEdited.color);
+                                    model.entityBeingEdited = note;
+                                    model.setColor(model.entityBeingEdited.color);
                                     model.setStackIndex(1);
                                   },
                                 )
                             )
-                        ),
+                        )
                     );
                   }
-                  )
+              )
           );
-        });
+        }
+    );
+  }
+
+  _deleteNote(BuildContext context, NotesModel model, Note note) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext alertContext) {
+          return AlertDialog(
+              title: Text("Delete Note"),
+              content: Text(
+                  "Are you sure you want to delete ${note.title}?"
+              ),
+              actions: [
+                FlatButton(child: Text("Cancel"),
+                    onPressed: () {
+                      Navigator.of(alertContext).pop();
+                    }
+                ),
+                FlatButton(child: Text("Delete"),
+                    onPressed: () async {
+                      //model.noteList.remove(note);
+                      //model.setStackIndex(0);
+                      await NotesDBWorker.db.delete(note.id);
+                      Navigator.of(alertContext).pop();
+                      Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                              backgroundColor: Colors.red,
+                              duration: Duration(seconds : 2),
+                              content: Text("Note deleted")
+                          )
+                      );
+                      model.loadData(NotesDBWorker.db);
+                    }
+                )
+              ]
+          );
+        }
+    );
+  }
+
+  Color _toColor(String color) {
+    switch (color) {
+      case 'red':
+        return Colors.red;
+      case 'green':
+        return Colors.green;
+      case 'blue':
+        return Colors.blue;
+      case 'yellow':
+        return Colors.yellow;
+      case 'grey':
+        return Colors.grey;
+      case 'purple':
+        return Colors.purple;
+      default:
+        return Colors.white;
     }
+  }
 }
