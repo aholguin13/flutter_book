@@ -15,8 +15,8 @@ class Note {
 
 class NotesModel extends Model {
   int stackIndex = 0;
-  List<Note> noteList = [];
-  Note noteBeingEdited;
+  List<Note> entryList = [];
+  Note entryBeingEdited;
   String color;
 
   void setStackIndex(int stackIndex) {
@@ -30,8 +30,8 @@ class NotesModel extends Model {
   }
 
   void loadData(dynamic database) async {
-    noteList.clear();
-    noteList.addAll(await database.getAll());
+    entryList.clear();
+    entryList.addAll(await database.getAll());
     notifyListeners();
   }
 }

@@ -60,15 +60,15 @@ class NotesList extends StatelessWidget {
               floatingActionButton: FloatingActionButton(
                   child: Icon(Icons.add, color: Colors.white),
                   onPressed: () {
-                    model.noteBeingEdited = Note();
+                    model.entryBeingEdited = Note();
                     model.setColor(null);
                     model.setStackIndex(1);
                   }
               ),
               body: ListView.builder(
-                  itemCount: model.noteList.length,
+                  itemCount: model.entryList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    Note note = model.noteList[index];
+                    Note note = model.entryList[index];
                     Color color = Colors.white;
                     color = _toColor(note.color);
                     switch(note.color){
@@ -99,8 +99,8 @@ class NotesList extends StatelessWidget {
                                   title: Text(note.title),
                                   subtitle: Text(note.content),
                                   onTap: () {
-                                    model.noteBeingEdited = note;
-                                    model.setColor(model.noteBeingEdited.color);
+                                    model.entryBeingEdited = note;
+                                    model.setColor(model.entryBeingEdited.color);
                                     model.setStackIndex(1);
                                   },
                                 )

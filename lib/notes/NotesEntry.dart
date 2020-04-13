@@ -15,10 +15,10 @@ class NotesEntry extends StatelessWidget {
 
   NotesEntry() {
     _titleEditingController.addListener(() { 
-       notesModel.noteBeingEdited.title = _titleEditingController.text;
+       notesModel.entryBeingEdited.title = _titleEditingController.text;
     });
     _contentEditingController.addListener(() { 
-       notesModel.noteBeingEdited.content  = _contentEditingController.text;
+       notesModel.entryBeingEdited.content  = _contentEditingController.text;
     });
   }
 
@@ -26,10 +26,10 @@ class NotesEntry extends StatelessWidget {
     if (!_formKey.currentState.validate()) {
       return;
     }
-    if (model.noteBeingEdited.id == null) {
-      await NotesDBWorker.db.create(notesModel.noteBeingEdited);
+    if (model.entryBeingEdited.id == null) {
+      await NotesDBWorker.db.create(notesModel.entryBeingEdited);
     } else {
-      await NotesDBWorker.db.update(notesModel.noteBeingEdited);
+      await NotesDBWorker.db.update(notesModel.entryBeingEdited);
     }
     notesModel.loadData(NotesDBWorker.db);
 
@@ -111,7 +111,7 @@ class NotesEntry extends StatelessWidget {
                )
         ),
         onTap: () {
-          notesModel.noteBeingEdited.color = color;
+          notesModel.entryBeingEdited.color = color;
           notesModel.setColor(color);
         }
     );
@@ -141,8 +141,8 @@ class NotesEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<NotesModel>(
           builder: (BuildContext context, Widget child, NotesModel model) {
-            _titleEditingController.text = model.noteBeingEdited?.title;
-            _contentEditingController.text = model.noteBeingEdited?.content;
+            _titleEditingController.text = model.entryBeingEdited?.title;
+            _contentEditingController.text = model.entryBeingEdited?.content;
             return Scaffold(
               bottomNavigationBar: Padding(
                 padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
