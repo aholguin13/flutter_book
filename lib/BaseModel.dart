@@ -1,3 +1,5 @@
+import 'package:scoped_model/scoped_model.dart';
+
 class BaseModel<T> extends Model {
   int stackIndex = 0;
   List<T> entityList = [];
@@ -9,8 +11,8 @@ class BaseModel<T> extends Model {
   }
 
   void loadData(database) async {
-    entryList.clear();
-    entryList.addAll(await database.getAll());
+    entityList.clear();
+    entityList.addAll(await database.getAll());
     notifyListeners();
   }
 }

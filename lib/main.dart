@@ -1,3 +1,4 @@
+import 'package:edu/tasks/Tasks.dart';
 import 'package:flutter/material.dart';
 
 import 'notes/Notes.dart';

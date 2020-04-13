@@ -1,4 +1,5 @@
-import '../BaseModel.dart';
+import 'package:edu/BaseModel.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 NotesModel notesModel = NotesModel();
 
@@ -13,7 +14,7 @@ class Note {
   }
 }
 
-class NotesModel extends BaseModel<Note> {
+class NotesModel extends BaseModel<Note>{
   String color;
 
   void setColor(String color) {
@@ -21,3 +22,26 @@ class NotesModel extends BaseModel<Note> {
     notifyListeners();
   }
 }
+//
+//class NotesModel extends Model {
+//  int stackIndex = 0;
+//  List<Note> entryList = [];
+//  Note entryBeingEdited;
+//  String color;
+//
+//  void setStackIndex(int stackIndex) {
+//    this.stackIndex = stackIndex;
+//    notifyListeners();
+//  }
+//
+//  void setColor(String color) {
+//    this.color = color;
+//    notifyListeners();
+//  }
+//
+//  void loadData(dynamic database) async {
+//    entryList.clear();
+//    entryList.addAll(await database.getAll());
+//    notifyListeners();
+//  }
+//}
