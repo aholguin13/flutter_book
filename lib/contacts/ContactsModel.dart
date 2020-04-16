@@ -1,4 +1,4 @@
-import "../BaseModel.dart";
+import '../BaseModel.dart';
 
 ContactsModel contactsModel = ContactsModel();
 

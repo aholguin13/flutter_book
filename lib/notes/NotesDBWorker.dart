@@ -113,66 +113,66 @@ class _SqfliteNotesDBWorker implements NotesDBWorker{
 
 
 
-class _MemoryNotesDBWorker implements NotesDBWorker {
-  static const _TEST = true;
-
-  var _notes = [];
-  var _nextId = 1;
-
-  _MemoryNotesDBWorker._() {
-    if (_TEST && _notes.isEmpty) {
-      var note = Note()
-        ..title = "Exercise: P2.3 Persistence"
-        ..content = "Code database."
-        ..color = 'blue';
-      create(note);
-    }
-  }
-
-  @override
-  Future<int> create(Note note) async {
-    note = _clone(note)..id = _nextId++;
-    _notes.add(note);
-    print("Added: $note");
-    print(getDatabasesPath());
-    return note.id;
-  }
-
-  @override
-  Future<void> update(Note note) async {
-    var old = await get(note.id);
-    if (old != null) {
-      old..title = note.title
-        ..content = note.content
-        ..color = note.color;
-      print("Updated: $note");
-    }
-  }
-
-  @override
-  Future<void> delete(int id) async {
-    _notes.removeWhere((note) => note.id == id);
-    print("Deleted: $id");
-  }
-
-  @override
-  Future<Note> get(int id) async {
-    return _clone(_notes.firstWhere((note) => note.id == id, orElse: () => null));
-  }
-
-  @override
-  Future<List<Note>> getAll() async {
-    return List.unmodifiable(_notes);
-  }
-
-  static Note _clone(Note note) {
-    if (note != null) {
-      return Note()
-        ..id = note.id
-        ..title = note.title
-        ..content = note.content
-        ..color = note.color;
-    }
-    return null;
-  }
-}
+//class _MemoryNotesDBWorker implements NotesDBWorker {
+//  static const _TEST = true;
+//
+//  var _notes = [];
+//  var _nextId = 1;
+//
+//  _MemoryNotesDBWorker._() {
+//    if (_TEST && _notes.isEmpty) {
+//      var note = Note()
+//        ..title = "Exercise: P2.3 Persistence"
+//        ..content = "Code database."
+//        ..color = 'blue';
+//      create(note);
+//    }
+//  }
+//
+//  @override
+//  Future<int> create(Note note) async {
+//    note = _clone(note)..id = _nextId++;
+//    _notes.add(note);
+//    print("Added: $note");
+//    print(getDatabasesPath());
+//    return note.id;
+//  }
+//
+//  @override
+//  Future<void> update(Note note) async {
+//    var old = await get(note.id);
+//    if (old != null) {
+//      old..title = note.title
+//        ..content = note.content
+//        ..color = note.color;
+//      print("Updated: $note");
+//    }
+//  }
+//
+//  @override
+//  Future<void> delete(int id) async {
+//    _notes.removeWhere((note) => note.id == id);
+//    print("Deleted: $id");
+//  }
+//
+//  @override
+//  Future<Note> get(int id) async {
+//    return _clone(_notes.firstWhere((note) => note.id == id, orElse: () => null));
+//  }
+//
+//  @override
+//  Future<List<Note>> getAll() async {
+//    return List.unmodifiable(_notes);
+//  }
+//
+//  static Note _clone(Note note) {
+//    if (note != null) {
+//      return Note()
+//        ..id = note.id
+//        ..title = note.title
+//        ..content = note.content
+//        ..color = note.color;
+//    }
+//    return null;
+//  }
+//}

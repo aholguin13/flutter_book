@@ -1,3 +1,4 @@
+import 'package:edu/voice/Voice.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'appointments/Appointments.dart';
@@ -25,7 +26,7 @@ class FlutterBook extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: DefaultTabController(
-            length: 4,
+            length: 5,
             child: Scaffold(
                 appBar: AppBar(
                     title: Text('FlutterBook Alexis Holguin'),
@@ -35,6 +36,7 @@ class FlutterBook extends StatelessWidget {
                           Tab(icon: Icon(Icons.contacts), text: 'Contacts'),
                           Tab(icon: Icon(Icons.note), text: 'Notes'),
                           Tab(icon: Icon(Icons.assignment_turned_in), text: 'Tasks'),
+                          Tab(icon: Icon(Icons.keyboard_voice), text: 'Voice',)
                         ]
                     )
                 ),
@@ -44,6 +46,7 @@ class FlutterBook extends StatelessWidget {
                       Contacts(),
                       Notes(),
                       Tasks(),
+                      Voice()
                     ]
                 )
             )
