@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:audio_recorder/audio_recorder.dart';
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -22,6 +24,9 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
 
   Recording _recording = new Recording();
   bool _isRecording = false;
+  AudioPlayer _audioPlayer = AudioPlayer();
+  AudioCache _audioCache = AudioCache();
+  String _pathToFile = '';
 
   _VoiceEntryState() {
     _titleEditingController.addListener(() {
@@ -103,6 +108,10 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
                           icon: Icon(Icons.stop),
                           onPressed: _isRecording ? _stop : null,
                         ),
+                        IconButton(
+                          icon: Icon(Icons.play_arrow),
+                          onPressed: _play,
+                        )
                       ],
                     ),
                   )
@@ -148,6 +157,7 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
       if(await AudioRecorder.hasPermissions) {
         print("Start recording: ${voiceNoteTempFileName()}");
         String path = voiceNoteTempFileName()+ DateTime.now().millisecondsSinceEpoch.toString();
+        _pathToFile = path;
         await AudioRecorder.start(
             path: path, audioOutputFormat: AudioOutputFormat.AAC
         );
@@ -180,6 +190,11 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
       _recording = recording;
       _isRecording = isRecording;
     });
+  }
+  
+  _play() async {
+    if(_pathToFile != '')
+      _audioCache.play(_pathToFile);
   }
 
 }
