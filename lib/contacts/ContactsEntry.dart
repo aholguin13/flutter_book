@@ -167,7 +167,9 @@ class ContactsEntry extends StatelessWidget with Avatar {
                         onTap: () async {
                           var cameraImage = await ImagePicker.pickImage(source: ImageSource.camera);
                           if (cameraImage != null) {
+                            print(avatarTempFileName());
                             cameraImage.copySync(avatarTempFileName());
+                            print(avatarTempFileName());
                             contactsModel.triggerRebuild();
                           }
                           Navigator.of(dialogContext).pop();

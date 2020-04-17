@@ -3,7 +3,7 @@ import 'package:edu/voice/VoiceList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'VoiceDBWorker.dart';
-import 'VoiceModel.dart';
+import 'VoiceModel.dart' show VoiceModel, voiceModel;
 
 class Voice extends StatelessWidget {
 

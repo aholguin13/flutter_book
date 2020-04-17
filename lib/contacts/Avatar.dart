@@ -9,6 +9,7 @@ mixin Avatar {
   }
 
   String avatarTempFileName() {
+    print(docsDir);
     return join(docsDir.path, "avatar");
   }
 

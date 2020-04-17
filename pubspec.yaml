@@ -26,6 +26,7 @@ dependencies:
   path_provider: ^1.6.5
   flutter_sound: ^3.1.7
   flutter_colorpicker: any
+  audio_recorder: ^1.0.2
 
   flutter:
     sdk: flutter

@@ -1,4 +1,5 @@
 import 'package:edu/voice/Voice.dart';
+import 'package:edu/voice/VoiceNote.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'appointments/Appointments.dart';
@@ -11,6 +12,7 @@ void main() {
   startMeUp() async {
     WidgetsFlutterBinding.ensureInitialized();
     Avatar.docsDir = await getApplicationDocumentsDirectory();
+    VoiceNote.tempDir = await getApplicationDocumentsDirectory();
     runApp(FlutterBook());
   }
   startMeUp();
