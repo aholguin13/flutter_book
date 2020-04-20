@@ -24,10 +24,9 @@ dependencies:
   flutter_calendar_carousel: ^1.4.11
   image_picker: ^0.6.5
   path_provider: ^1.6.5
-  flutter_sound: ^3.1.7
   flutter_colorpicker: any
   audio_recorder: ^1.0.2
-  audioplayers: ^0.15.1
+  audioplayer: ^0.8.1
 
   flutter:
     sdk: flutter

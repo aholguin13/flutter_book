@@ -11,6 +11,7 @@ class VoiceDBWorker{
   static const String KEY_TITLE = 'title';
   static const String KEY_LENGTH = 'length';
   static const String KEY_DATE = 'date';
+  static const String KEY_PATH = 'path';
 
   Database _db;
 
@@ -20,7 +21,7 @@ class VoiceDBWorker{
 
   Future<Database> _init() async {
     return await openDatabase(DB_NAME,
-        version: 1,
+        version: 2,
         onOpen: (db) {},
         onCreate: (Database db, int version) async {
           await db.execute(
@@ -28,7 +29,8 @@ class VoiceDBWorker{
                   "$KEY_ID INTEGER PRIMARY KEY,"
                   "$KEY_TITLE TEXT,"
                   "$KEY_LENGTH TEXT,"
-                  "$KEY_DATE TEXT"
+                  "$KEY_DATE TEXT,"
+                  "$KEY_PATH TEXT"
                   ")"
           );
         }
@@ -39,9 +41,9 @@ class VoiceDBWorker{
   Future<int> create(Voice voice) async {
     Database db = await database;
     return await db.rawInsert(
-        "INSERT INTO $TBL_NAME ($KEY_TITLE, $KEY_LENGTH, $KEY_DATE) "
-            "VALUES (?, ?, ?)",
-        [voice.title, voice.length, voice.date]
+        "INSERT INTO $TBL_NAME ($KEY_TITLE, $KEY_LENGTH, $KEY_DATE, $KEY_PATH) "
+            "VALUES (?, ?, ?, ?)",
+        [voice.title, voice.length, voice.date, voice.path]
     );
   }
 
@@ -77,7 +79,8 @@ class VoiceDBWorker{
       ..id = map[KEY_ID]
       ..title = map[KEY_TITLE]
       ..length = map[KEY_LENGTH]
-      ..date = map[KEY_DATE];
+      ..date = map[KEY_DATE]
+      ..path = map[KEY_PATH];
   }
 
   Map<String, dynamic> _voiceToMap(Voice voice) {
@@ -85,7 +88,8 @@ class VoiceDBWorker{
       ..[KEY_ID] = voice.id
       ..[KEY_TITLE] = voice.title
       ..[KEY_LENGTH] = voice.length
-      ..[KEY_DATE] = voice.date;
+      ..[KEY_DATE] = voice.date
+      ..[KEY_PATH] = voice.path;
   }
 
 }

@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:audio_recorder/audio_recorder.dart';
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:audioplayer/audioplayer.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -21,18 +20,24 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
 
   final TextEditingController _titleEditingController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormFieldState<String>> _titleFormFieldKey = GlobalKey();
 
   Recording _recording = new Recording();
   bool _isRecording = false;
   AudioPlayer _audioPlayer = AudioPlayer();
-  AudioCache _audioCache = AudioCache();
+  //AudioCache _audioCache = AudioCache();
   String _pathToFile = '';
+  bool _recordingCheck = false;
 
-  _VoiceEntryState() {
-    _titleEditingController.addListener(() {
-      voiceModel.entityBeingEdited.title = _titleEditingController.text;
-    });
-  }
+  get _values => ({
+    'title': _titleFormFieldKey.currentState?.value
+  });
+
+//  _VoiceEntryState() {
+//    _titleEditingController.addListener(() {
+//      voiceModel.entityBeingEdited.title = _titleEditingController.text;
+//    });
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +78,9 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
                   FlatButton(
                     child: Text('Save'),
                     onPressed: () {
+                      model.entityBeingEdited.title = _values['title'];
+                      model.entityBeingEdited.path = _pathToFile;
+                      print('WHEN SAVE ${model.entityBeingEdited.title} ${model.entityBeingEdited.path}');
                       _save(context, model);
                     },
                   )
@@ -80,14 +88,16 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
               ),
             ),
             body: Form(
-              key: _formKey,
+              //key: _formKey,
               child: ListView(
                 children: [
                   ListTile(
                     leading: Icon(Icons.title),
                     title: TextFormField(
+                      //initialValue: voiceModel.entityBeingEdited.title != null? voiceModel.entityBeingEdited.title : '',
+                      key: _titleFormFieldKey,
                       decoration: InputDecoration(hintText: 'Title'),
-                      controller: _titleEditingController,
+                      //controller: _titleEditingController,
                       validator: (String value) {
                         if(value.length == 0){
                           return 'Please enter a title';
@@ -126,9 +136,10 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
 
 
   void _save(BuildContext context, VoiceModel model) async {
-    if (!_formKey.currentState.validate()) {
+    if (!_titleFormFieldKey.currentState.validate() && _recordingCheck == true) {
       return;
     }
+    model.entityBeingEdited.title = _values['title'];
     int id = 0;
     if (model.entityBeingEdited.id == null) {
       await VoiceDBWorker.db.create(voiceModel.entityBeingEdited);
@@ -142,6 +153,7 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
       // FIXME: force to reload the avartar in the ContactsList
     }
     voiceModel.loadData(VoiceDBWorker.db);
+    _titleFormFieldKey.currentState.reset();
     model.setStackIndex(0);
     Scaffold.of(context).showSnackBar(
         SnackBar(
@@ -155,9 +167,11 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
 
     try{
       if(await AudioRecorder.hasPermissions) {
+        _recordingCheck = true;
         print("Start recording: ${voiceNoteTempFileName()}");
         String path = voiceNoteTempFileName()+ DateTime.now().millisecondsSinceEpoch.toString();
-        _pathToFile = path;
+      //  _pathToFile = path;
+        print('THIS IS THE TEST $path');
         await AudioRecorder.start(
             path: path, audioOutputFormat: AudioOutputFormat.AAC
         );
@@ -179,11 +193,16 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
   }
 
   _stop() async {
+    bool isRecording = await AudioRecorder.isRecording;
+
     var recording = await AudioRecorder.stop();
     print("Stop recording: ${recording.path}");
-    bool isRecording = await AudioRecorder.isRecording;
+
     File file = File(recording.path);
+    //file.copySync(recording.path);
     print('${await file.length()}');
+    print(file.path);
+    _pathToFile = file.path;
 
 
     setState(() {
@@ -193,8 +212,16 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
   }
   
   _play() async {
-    if(_pathToFile != '')
-      _audioCache.play(_pathToFile);
+
+    if(_pathToFile != '' && await File(_pathToFile).exists()) {
+      _audioPlayer.play('$_pathToFile', isLocal: true);
+
+    }
+  }
+
+  _pause() async {
+    if(_pathToFile != '' && await File(_pathToFile).exists())
+      _audioPlayer.pause();
   }
 
 }

@@ -181,9 +181,12 @@ class ContactsEntry extends StatelessWidget with Avatar {
                     GestureDetector(
                       child: Text("Select From Gallery"),
                       onTap: () async {
+                        print('Inside Select Gallery ${avatarTempFileName()}');
                         var galleryImage = await ImagePicker.pickImage(source: ImageSource.gallery);
                         if (galleryImage != null) {
                           galleryImage.copySync(avatarTempFileName());
+                          print('after select ${avatarTempFileName()}');
+                          print(contactsModel.entityBeingEdited);
                           imageCache.clear();
                           contactsModel.triggerRebuild();
                         }

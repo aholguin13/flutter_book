@@ -27,16 +27,22 @@ class VoiceList extends StatelessWidget with VoiceNote{
                 },
               ),
 
-              body: ListView.builder(
+              body: GridView.builder(
                   itemCount: voiceModel.entityList.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                    crossAxisCount: 2,
+                  ),
                   itemBuilder: (BuildContext context, int index){
                    Voice voice = voiceModel.entityList[index];
                    File recordingFile = File(voiceNoteFileName(voice.id));
                    bool recordingFileExists = recordingFile.existsSync();
                    return Container(
-                       padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                       padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+                       margin: EdgeInsets.all(5),
                        child: Slidable(
-                           actionPane: SlidableDrawerActionPane(),
+                           actionPane: SlidableScrollActionPane(),
                            actionExtentRatio: .25,
                            secondaryActions: [
                              IconSlideAction(
@@ -49,8 +55,23 @@ class VoiceList extends StatelessWidget with VoiceNote{
                            child: Card(
                                elevation: 8,
                                child: ListTile(
-                                 title: Text(voice.title),
-                                 //subtitle: Text(note.content),
+                                 title: Row(
+                                   children: <Widget>[
+                                     Text('${voice.title != null ? voice.title:'null'}'),
+                                     Text(voice.path),
+                                     IconButton(
+                                       icon: Icon(Icons.play_arrow),
+                                       onPressed: (){print('test');},
+                                       //  iconSize: 0,
+                                     ),
+                                     IconButton(
+                                       icon: Icon(Icons.pause),
+                                     ),
+                                     IconButton(
+                                       icon: Icon(Icons.stop),
+                                     )
+                                   ],
+                                 ),
                                  onTap: () {
                                    model.entityBeingEdited = voice;
                                 //   model.setColor(model.entityBeingEdited.color);
