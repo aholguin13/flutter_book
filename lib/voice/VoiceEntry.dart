@@ -4,6 +4,7 @@ import 'package:audio_recorder/audio_recorder.dart';
 import 'package:audioplayer/audioplayer.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'VoiceNote.dart';
 import 'VoiceDBWorker.dart';
@@ -106,21 +107,31 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
                       },
                     ),
                   ),
+                  Divider(),
                   ListTile(
-                    trailing: Wrap(
+                    title: Wrap(
+                      alignment: WrapAlignment.center,
                       spacing: 15,
                       children: <Widget>[
                         IconButton(
                           icon: Icon(Icons.mic),
                           onPressed: _isRecording ? null : _startRecording,
+                          iconSize: 50,
                         ),
                         IconButton(
                           icon: Icon(Icons.stop),
                           onPressed: _isRecording ? _stop : null,
+                          iconSize: 50,
                         ),
                         IconButton(
                           icon: Icon(Icons.play_arrow),
                           onPressed: _play,
+                          iconSize: 50,
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.pause),
+                          onPressed: _pause,
+                          iconSize: 50,
                         )
                       ],
                     ),
@@ -136,10 +147,12 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
 
 
   void _save(BuildContext context, VoiceModel model) async {
-    if (!_titleFormFieldKey.currentState.validate() && _recordingCheck == true) {
+    print(_recordingCheck);
+    if (!_titleFormFieldKey.currentState.validate() && !_recordingCheck) {
       return;
     }
     model.entityBeingEdited.title = _values['title'];
+    model.entityBeingEdited.date = new DateFormat("MM-dd-yyyy").format(DateTime.now());
     int id = 0;
     if (model.entityBeingEdited.id == null) {
       await VoiceDBWorker.db.create(voiceModel.entityBeingEdited);
@@ -212,7 +225,6 @@ class _VoiceEntryState extends State<VoiceEntry> with VoiceNote{
   }
   
   _play() async {
-
     if(_pathToFile != '' && await File(_pathToFile).exists()) {
       _audioPlayer.play('$_pathToFile', isLocal: true);
 
