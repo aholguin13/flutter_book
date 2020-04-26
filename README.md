@@ -1,6 +1,6 @@
-# edu
+# FlutterBook
 
-FlutterBook.
+FlutterBook app example from Practical Flutter: Improve Your Mobile Development with Google's Latest Open-Source SDK with added integration of voice recordings.
 
 ## Getting Started
 
